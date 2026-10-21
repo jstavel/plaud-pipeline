@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-21
 
-**Status**: Draft (čeká na clarify)
+**Status**: Clarified 2026-10-21 (čeká na `/speckit.plan`)
 
 **Input**: Capability C2 z `~/org/projects/plaud-pipeline.org`: „položka → záznam
 v `ingest-ledger.org`". Uzavírá capability gap pojmenovanou v ADR 0012 (nic dnes
@@ -21,27 +21,25 @@ technickými metadaty a stavem `TODO`.
 
 ## Clarifications
 
-### Session 2026-10-21 — otevřené
+### Session 2026-10-21 — vyřešeno (Jan)
 
 - **Q: Plní C2 `:SYNOPSIS:`, nebo až C4?**
-  Capability tabulka říká u C2 „`:SYNOPSIS:` vyplněná", ale synopsis vzniká
-  z přepisu, což je C4. Dvě čtení:
-  **(a)** C2 registruje bez synopse, záznam je „nedecidovatelný", dokud ji C4
-  nedoplní. **(b)** C2 volá přepis sám, takže registrace je drahá a pomalá.
-  → **Návrh: (a).** Why: registrace musí být rychlá a levná (běží se často), a
-  rozhodnutí potřebuje obsah až ve chvíli rozhodování. Záznam ve stavu `TODO`
-  s prázdnou synopsí je poctivý stav, ne chyba.
-  **Důsledek, který je potřeba schválit:** AC capability tabulky u C2 se přeformuluje
-  na „záznam není předložen k rozhodnutí, dokud je `:SYNOPSIS:` prázdná".
+  → **A: až C4.** C2 registruje bez synopse; prázdná synopse je **platný stav**
+  záznamu, ne chyba. Záznam není předložen k rozhodnutí, dokud ji C4 nedoplní.
+  *Why:* registrace se pouští často a musí být levná; synopsis vyžaduje přepis,
+  který je drahý. Rozhodnutí potřebuje obsah až ve chvíli rozhodování.
+  *Důsledek:* AC capability tabulky u C2 se přeformulovalo (viz
+  `~/org/projects/plaud-pipeline.org`) — „`:SYNOPSIS:` vyplněná" by odporovalo
+  tomuto rozhodnutí.
 
 - **Q: Odkud `:CREATED:`?**
-  Z data v názvu souboru (`2026-04-01 10_37_45.mp3`), a když název datum neobsahuje,
-  z `mtime`. → **Návrh: název první, mtime jako fallback**, a v LOGBOOK uvést,
-  který zdroj byl použit.
+  → **A: nejdřív z data v názvu souboru, `mtime` jako fallback.** Který zdroj byl
+  použit, se zapíše do `:LOGBOOK:` — aby šlo za rok rozeznat odvozené datum od
+  skutečného.
 
 - **Q: Co `:PLAUD-ID:`?**
-  Doplní se z API podle `start_at` (join klíč podle ADR 0011/inventory), když
-  záznam v API existuje; jinak zůstane prázdné. Nikdy se nehádá z názvu.
+  → **A: jen z API, join přes `start_at`**, nikdy se nehádá z názvu. Když API
+  neodpovídá, `:PLAUD-ID:` zůstane prázdné a běh neselže.
 
 ## User Scenarios & Testing
 
@@ -106,15 +104,19 @@ registraci → záznam je po běhu bajtově identický.
 - **FR-002 Identita**: `:HASH:` = sha256 obsahu souboru; duplicita se rozhoduje
   výhradně podle hashe.
 - **FR-003 Metadata**: `:SOURCE:` absolutní cesta, `:DURATION:` z `ffprobe`,
-  `:BITRATE:`, `:FILESIZE:`, `:CREATED:` (viz Clarifications), `:KIND:`.
+  `:BITRATE:`, `:FILESIZE:`, `:KIND:`. `:CREATED:` z data v názvu souboru,
+  jinak z `mtime`; použitý zdroj se zapíše do `:LOGBOOK:`.
 - **FR-004 Stav**: nový záznam vzniká jako `TODO`; jiný stav stroj nikdy nenastaví.
 - **FR-005 Append-only**: existující záznamy se nepřepisují ani nepřesouvají.
 - **FR-006 Soubory**: `~/Downloads` se jen čte; žádný soubor se nemění ani nemaže.
 - **FR-007 Org validita**: výsledný soubor musí zůstat parsovatelný Emacsem se
   stavy `TODO INGEST REJECT IGNORE WAIVED`.
 - **FR-008 Opakovatelnost**: druhý běh nad stejným stavem = 0 nových záznamů.
-- **FR-009 Síť**: `:PLAUD-ID:` se doplňuje přes API s throttle + backoff; při
-  nedostupnosti API se záznam založí bez `:PLAUD-ID:` a běh neselže.
+- **FR-009 Síť**: `:PLAUD-ID:` se doplňuje přes API (join přes `start_at`, nikdy
+  z názvu) s throttle + backoff; při nedostupnosti API se záznam založí bez
+  `:PLAUD-ID:` a běh neselže.
+- **FR-010 Synopse**: registrace **nevytváří ani nemodifikuje `:SYNOPSIS:`**;
+  prázdná hodnota je platný stav (plní ji C4).
 
 ## Success Criteria
 
@@ -127,6 +129,8 @@ registraci → záznam je po běhu bajtově identický.
 - **SC-006**: ledger po běhu projde `org-todo-kwd-alist` s pěti stavy (test
   v Emacsu v batchi, viz dnešní ověření).
 - **SC-007**: `mtime` všech souborů v `~/Downloads` je po běhu nezměněný.
+- **SC-008**: každý nový záznam má **prázdné** `:SYNOPSIS:` a test to považuje
+  za očekávaný stav (nikoli za chybějící data).
 
 ## Key Entities
 
