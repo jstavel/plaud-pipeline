@@ -1,5 +1,7 @@
 # plaud-pipeline
 
+[![CI](https://github.com/jstavel/plaud-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/jstavel/plaud-pipeline/actions/workflows/ci.yml)
+
 Pipeline for the Plaud capture → corpus workflow. One workflow, many tools
 (ADR 0012); work is organized by capability (`specs/<capability>/`), not by
 tool.
