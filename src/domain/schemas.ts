@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ENTRY_KINDS, ERROR_PHASES, OUT_OF_SCOPE_REASONS } from "./types.js";
+import { ERROR_PHASES, OUT_OF_SCOPE_REASONS } from "./types.js";
 
 export const cliOptionsSchema = z.object({
   downloads: z.string(),
@@ -57,5 +57,3 @@ export const reportSchema = z.object({
     }),
   ),
 });
-
-export const entryKindSchema = z.enum(ENTRY_KINDS as unknown as [string, ...string[]]);

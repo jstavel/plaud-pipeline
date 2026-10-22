@@ -53,6 +53,12 @@ export function parseLedger(text: string): LedgerEntry[] {
       const body: Array<{ name: string; value: string }> = [];
       while (i < lines.length) {
         const inner = lines[i] ?? "";
+        if (inner === "") {
+          // Blank lines are ignored everywhere (the ledger contract relies on
+          // that for the append separator); they cannot make a drawer malformed.
+          i += 1;
+          continue;
+        }
         if (DRAWER_END.test(inner)) {
           closed = true;
           i += 1;
@@ -66,7 +72,7 @@ export function parseLedger(text: string): LedgerEntry[] {
           if (!prop) {
             throw new FatalError(
               "ledger",
-              `malformed property drawer at line ${start + 1}: ${JSON.stringify(raw)}`,
+              `malformed property drawer at line ${start + 1}: ${JSON.stringify(inner)}`,
             );
           }
           body.push({ name: prop[1] ?? "", value: (prop[2] ?? "").trim() });

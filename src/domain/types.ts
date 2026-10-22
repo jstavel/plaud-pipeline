@@ -4,13 +4,6 @@ export type EntryKind =
   | "archive"
   | "other-file";
 
-export const ENTRY_KINDS: readonly EntryKind[] = [
-  "Plaud-voice-record",
-  "audio-file",
-  "archive",
-  "other-file",
-];
-
 export type LedgerState = "TODO" | "INGEST" | "REJECT" | "IGNORE" | "WAIVED";
 
 export const LEDGER_STATES: readonly LedgerState[] = [

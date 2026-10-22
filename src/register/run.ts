@@ -10,7 +10,7 @@ import type {
 import { readLedger, parseLedger, knownHashes } from "../ledger/index.js";
 import { appendLedger, serializeEntry } from "../ledger/index.js";
 import { scanDownloads } from "./scan.js";
-import { hashFile } from "./fingerprint.js";
+import { hashFile, type FileFingerprint } from "./fingerprint.js";
 import { bitrateText, durationText, estimateMin, kindForBasename } from "./classify.js";
 import { createdFor, formatLogTimestamp, logbookMessage } from "../metadata/created.js";
 import { probeAudio } from "../metadata/ffprobe.js";
@@ -22,12 +22,17 @@ import {
 } from "../plaud/inventory.js";
 import { buildReport } from "../report/build.js";
 
+// Injectable fingerprint port: an enabler for deterministic mid-run tests;
+// production always uses the real streamed hashFile.
+export type FingerprintPort = (path: string) => Promise<FileFingerprint>;
+
 export interface RegisterInput {
   downloads: string;
   ledger: string;
   noPlaud: boolean;
   plaud?: PlaudInventoryPort | null;
   now?: Date;
+  fingerprint?: FingerprintPort;
 }
 
 interface SelectedItem {
@@ -46,6 +51,7 @@ const CONTROL_CHARS = /[\u0000-\u001f\u007f]/;
 
 export async function register(input: RegisterInput): Promise<RunReport> {
   const now = input.now ?? new Date();
+  const fingerprint: FingerprintPort = input.fingerprint ?? hashFile;
   const errors: ReportItemError[] = [];
   const duplicates: ReportItemDuplicate[] = [];
   const outOfScope: ReportItemOutOfScope[] = [];
@@ -80,9 +86,9 @@ export async function register(input: RegisterInput): Promise<RunReport> {
     let hash: string;
     let sizeBytes: number;
     try {
-      const fingerprint = await hashFile(candidate.path);
-      hash = fingerprint.hash;
-      sizeBytes = fingerprint.sizeBytes;
+      const fp = await fingerprint(candidate.path);
+      hash = fp.hash;
+      sizeBytes = fp.sizeBytes;
     } catch (error) {
       errors.push({ path: candidate.path, phase: "hash", reason: String(error) });
       continue;
@@ -173,7 +179,7 @@ export async function register(input: RegisterInput): Promise<RunReport> {
     // Re-verify only the candidates selected for writing (data-model rule):
     // a file that changed or disappeared during the run is an error, not a record.
     try {
-      const recheck = await hashFile(item.path);
+      const recheck = await fingerprint(item.path);
       if (recheck.hash !== item.hash) {
         errors.push({
           path: item.path,
