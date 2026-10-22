@@ -267,3 +267,18 @@ in conversation). Status after implementation (2026-10-22):
 - STILL OPEN: the verbatim fixture is derived (legacy `:DECISION:` drawer
   removed from the first real `TODO` record; no v2-shaped record exists in the
   real ledger yet); replace it when a genuine one appears.
+
+---
+
+## Phase 7: Convergence
+
+**Purpose**: Gaps found by `/speckit.converge` on 2026-10-22 against `spec.md`,
+`plan.md`, `contracts/` and `data-model.md` (implementation state: T001–T054
+complete, 71 tests green, quickstart verified). Ordered by severity; each task
+traces to its source. Constitution principles I–III verified — no remediation.
+
+- [ ] T055 Add an integration test for a malformed property drawer: run against a ledger with a broken `:PROPERTIES:` block, assert exit 2 and byte-untouched ledger per `ledger-entry.md` read/parse rules (partial)
+- [ ] T056 Ensure and prove the SourceItem validation outcome from `data-model.md` (partial): (1) **behavior** — a file whose content changes between the scan-time hash and the completed fingerprint must end as a per-file error, never a record; the mechanism is implementer's choice and the observable outcome binds (the pre-append re-hash in `src/register/run.ts` is the current equivalent mechanism — verify it end-to-end and strengthen only if the outcome can be violated); (2) **evidence** — outcome-level tests for BOTH the change case and the disappearance case, each asserting a per-file error entry, no record written, and exit 0; an injectable fingerprint port is acceptable as an enabler for deterministic tests, but the tests must assert the observable outcome, not that the port was called.
+- [ ] T057 Add a test for `--help`: prints usage, exits 0, performs no filesystem writes per `contracts/cli.md` (partial)
+- [ ] T058 Add a test for a basename containing a control character: one `chyby` entry with phase `scan`, no record per `data-model.md` SourceItem rule (partial)
+- [ ] T059 Remove the unused `entryKindSchema` export from `src/domain/schemas.ts` (or justify it at a boundary) — code not called for by spec/plan/tasks (unrequested)

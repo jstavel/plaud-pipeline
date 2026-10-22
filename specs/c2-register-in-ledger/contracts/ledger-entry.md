@@ -47,8 +47,11 @@
   `~/org/ingest-ledger.org` (2026-10-22: 171 records, all ten properties, one
   layout). `:CLEANUP:` has no trailing whitespace (exactly 11 characters). The
   template above is the single source of truth for this spelling, pinned
-  byte-exactly by `tests/contract/ledger-entry.test.ts` against a verbatim ledger
-  sample (`tests/fixtures/ledger/verbatim-entry.org`).
+  byte-exactly by `tests/contract/ledger-entry.test.ts` against a sample fixture
+  (`tests/fixtures/ledger/verbatim-entry.org`) derived from the real ledger's
+  first `TODO` record with the legacy `:DECISION:` drawer removed — the drawer's
+  five lines are the only removed bytes; the whitespace layout is otherwise
+  verbatim.
 
 ## Append protocol
 
