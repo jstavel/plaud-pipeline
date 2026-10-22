@@ -53,6 +53,22 @@ Práce se člení **podle capability** (`specs/c2-register-in-ledger/`), ne podl
 pořadí. Nálezy z review jdou do `spec.md` → `## Clarifications` s datem, nikdy
 jen do konverzace.
 
+### Prompty a komunikace s builder agentem
+
+`prompts/` obsahuje jen **opakované šablony** vstupů (s proměnnými jako
+`$CAPABILITY`). Jednorázové vstupy nesoucí owner-intent (záměr, přijatá
+rozhodnutí, „Done means“) se ukládají **vedle artefaktů příslušné capability**
+jako datovaný záznam (např. `prompt-YYYY-MM-DD-<nazev>.md`), aby byly pinovatelné
+v gitu — chat historie (`.agent-shell/transcripts/`) není v repu. Mechanické
+vstupy bez vlastního obsahu („spusť /speckit.plan pro C2“) se necommitují; jejich
+trvalým záznamem je výstupní artefakt, který vznikne. Jednorázový prompt se po
+zpracování **neupravuje** — je to záznam, ne živý dokument; pozdější korekce
+patří do nových artefaktů.
+
+*Why:* záměr člověka musí být dostupný další session bez přístupu ke konverzaci;
+a naopak — duplikování obsahu, který už žije v Clarifications či kontraktech,
+vytváří třetí místo pro totéž a tím drift.
+
 ## Governance
 
 Constitution se mění jen amendmendem s datem a důvodem v `## Amendment Log`.
@@ -63,3 +79,7 @@ je to chyba jednoho z nich a řeší se novým ADR, ne tichou úpravou.
 
 - 2026-10-21 — initial version (3 principy, odvozeno z ADR 0011–0013 a z chyb
   naměřených při první dávce 2026-10-21).
+- 2026-10-22 — nová sekce „Prompty a komunikace s builder agentem“ (Development
+  Workflow). Důvod: rozdvojení vstupů mezi `prompts/` a git-vyloučenými
+  transcripts vyžaduje pravidlo, kam jednorázový owner-intent patří; rozhodnuto
+  s ownerem 2026-10-22 (šablony v `prompts/`, jednorázové záznamy u capability).

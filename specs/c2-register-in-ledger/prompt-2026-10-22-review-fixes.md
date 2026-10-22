@@ -1,6 +1,6 @@
 # Prompt: C2 review fixes (spec + contracts reconciliation)
 
-**Použití:** dej tento text builder agentovi (OpenCode) pro capability
+**Použití:** jednorázový vstup (záznam review roundu 2026-10-22); patří vedle artefaktů capability, ne do šablon v `prompts/`. Dej tento text builder agentovi (OpenCode) pro capability
 `c2-register-in-ledger`. Vychází z nezávislé recenze clarify round 1 + plan
 artefaktů (2026-10-22). Nejde o nové plánování — jde o závaznost deferovaných
 rozhodnutí a dva konkrétní omyly nalezené proti realitě.
