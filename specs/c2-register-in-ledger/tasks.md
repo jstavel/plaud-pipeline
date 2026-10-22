@@ -250,3 +250,21 @@ Task: "Write failing all-state dedupe test in tests/integration/dedupe-any-state
 - T050 is an owned task even though it edits `~/org/projects/ingest-spec.org` outside this repo.
 - Keep `src/ledger/` as the only org-aware area; other tasks must not parse or write org text.
 - A second run over the same state must always produce `nové: 0`.
+
+## Known Deliberate Gaps (review 2026-10-22)
+
+Recorded so they survive rehydration (constitution: review findings never live only
+in conversation). Each belongs to the task that touches it — do not resolve it
+elsewhere or preempt the implementer.
+
+- Legacy `:CREATED: N/A` — the real ledger contains it, the contract allows only
+  `YYYY-MM-DD`; the parser must decide deliberately whether legacy values are
+  tolerated or fatal → T010, T048.
+- `tests/contract/ledger-entry.test.ts` runs under `node --test` today; keep it
+  green-equivalent under Vitest → T001–T003.
+- `serializeEntry` input shape is provisional; the oracle is fixed (byte-exact
+  against `tests/fixtures/ledger/verbatim-entry.org`, values-only normalization) →
+  T011.
+- The verbatim fixture is derived (legacy `:DECISION:` drawer removed from the
+  first real `TODO` record; no v2-shaped record exists in the real ledger yet);
+  replace it when a genuine one appears → T008/T009.
