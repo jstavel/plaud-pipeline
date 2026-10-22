@@ -1,0 +1,45 @@
+#+TODO: TODO(t) | INGEST(i@!) REJECT(r@) IGNORE(x@) WAIVED(a@)
+
+* TODO [7 min] 2026-04-01 10_37_45.mp3
+  :PROPERTIES:
+  :HASH:       aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  :PLAUD-ID:   
+  :CREATED:    2026-04-01
+  :DURATION:   06:48
+  :BITRATE:    32k
+  :FILESIZE:   1633472
+  :SOURCE:     /home/jstavel/Downloads/2026-04-01 10_37_45.mp3
+  :SYNOPSIS:   
+  :CLEANUP:
+  :KIND:       Plaud-voice-record
+  :END:
+  :DECISION:
+  - [ ] INGEST  (Move to corpus/objects/UUID/)
+  - [ ] REJECT  (Delete from Downloads)
+  - [ ] IGNORE  (Keep in Downloads, remove from TODO)
+  :END:
+  :LOGBOOK:
+  - [2026-07-10 Fri 21:27] Auto-detected by Staging Worker.
+  :END:
+* WAIVED [11 min] old-backup 2026-05-12 12_41_21.mp3
+  :PROPERTIES:
+  :HASH:       bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  :PLAUD-ID:   
+  :CREATED:    2026-05-12
+  :DURATION:   10:31
+  :BITRATE:    32k
+  :FILESIZE:   2528288
+  :SOURCE:     /home/jstavel/Downloads/zaloha/old-backup 2026-05-12 12_41_21.mp3
+  :SYNOPSIS:   
+  :CLEANUP:
+  :KIND:       Plaud-voice-record
+  :END:
+  :DECISION:
+  - [ ] INGEST  (Move to corpus/objects/UUID/)
+  - [ ] REJECT  (Delete from Downloads)
+  - [ ] IGNORE  (Keep in Downloads, remove from TODO)
+  :END:
+  :LOGBOOK:
+  - [2026-07-10 Fri 21:28] Auto-detected by Staging Worker.
+  - [2026-10-21 Wed 15:00] WAIVED — mimo scope (rekurzivní scan; scope = flat ~/Downloads, ADR 0013). Soubor zůstává na místě.
+  :END:

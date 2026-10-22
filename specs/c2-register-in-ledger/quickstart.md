@@ -64,15 +64,23 @@ emacs --batch -Q -l tests/emacs/check-ledger.el -- /tmp/c2-ledger.org
 
 | Scenario | Fixture / command | Expected |
 |---|---|---|
-| New files | `tests/fixtures/downloads/basic` (3 files) | 3 new `TODO` entries; hashes match `sha256sum`; `mtime` unchanged. |
+| New files | `tests/fixtures/downloads/basic` (3 files) | 3 new `TODO` entries; hashes match `sha256sum`; `mtime` unchanged; `:SOURCE:` is absolute even when `--downloads` is passed relative. |
 | Idempotent second run | repeat the same command | `nové: 0`; ledger bytes unchanged. |
-| Duplicate | `tests/fixtures/downloads/duplicates` | 1 new, 1 duplicate. |
-| Nested directory | `tests/fixtures/downloads/nested` | 0 new; directory counted as `mimo scope: 1`; contents never read. |
-| Non-regular entry | `tests/fixtures/downloads/non-regular` (symlink/fifo) | 0 new; entry counted as `mimo scope: 1` with reason `symlink`/`fifo`; target never read. |
-| WAIVED entry | `tests/fixtures/ledger/waived.org` | existing entry byte-identical; new entry is `TODO`. |
+| Duplicate | `tests/fixtures/downloads/duplicates` with a **fresh ledger** (the copies share one hash, so against an already-populated ledger both report as duplicates) | 1 new, 1 duplicate. |
+| Nested directory | `tests/fixtures/downloads/nested` | 0 new; directory counted as `mimo scope: 1`; contents never read; no ledger file is created when nothing is appended. |
+| Non-regular entry | `tests/fixtures/downloads/non-regular` (symlink/fifo) | 0 new; entries counted as `mimo scope` with reasons `symlink`/`fifo` (the directory holding the symlink target is another `mimo scope` item); target never read. |
+| WAIVED entry | `tests/fixtures/ledger/waived.org` | existing entry byte-identical (old bytes are an exact prefix of the result); new entry is `TODO`. |
 | Missing synopsis | any new entry | `:SYNOPSIS:` present and empty; test treats it as valid. |
 | API unavailable | `--no-plaud`, or fake server failure | entries written with empty `:PLAUD-ID:`; exit 0. |
 | Report JSON | add `--json` | one JSON object validates against `contracts/run-report.md`. |
+
+**Verified 2026-10-22** (all scenarios executed): `npm test` — 71/71 green,
+`npm run test:emacs` — OK. Fixture run printed `nové: 3`
+with the canonical header on a fresh ledger and passed the Emacs check; the
+second run printed `nové: 0` with unchanged ledger bytes; fresh-ledger
+duplicates printed `nové: 1`, `duplicity: 1`; nested printed `mimo scope: 1`;
+non-regular printed `mimo scope: 2` (symlink + fifo); the WAIVED fixture's
+845 bytes were an exact prefix after a run that appended three `TODO` entries.
 
 ## Contracts and model
 

@@ -7,12 +7,18 @@
 // byte-for-byte. serializeEntry returns the entry without its trailing newline;
 // the append protocol adds separators (join "\n\n" + final "\n").
 
-import { test } from "node:test";
+import { test } from "vitest";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { serializeEntry } from "../../src/ledger/serialize.ts";
+import {
+  CANONICAL_HEADER,
+  appendLedger,
+  lockPathFor,
+} from "../../src/ledger/append.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const sample = readFileSync(
@@ -57,6 +63,19 @@ function normalizeValues(text) {
     .replace(/^(  - \[)[^\]]*(\] ).*$/m, "$1<log-ts>$2<log>");
 }
 
+const properties = new Set([
+  "HASH",
+  "PLAUD-ID",
+  "CREATED",
+  "DURATION",
+  "BITRATE",
+  "FILESIZE",
+  "SOURCE",
+  "SYNOPSIS",
+  "CLEANUP",
+  "KIND",
+]);
+
 test("serialized entry is byte-identical to the verbatim ledger sample", () => {
   assert.equal(serializeEntry(sampleEntry) + "\n", sample);
 });
@@ -91,18 +110,6 @@ test("pinned layout: value field starts at 1-based column 16 on every padded pro
   assert.ok(!out.includes(":DECISION:"), "no :DECISION: drawer is written");
   assert.ok(out.endsWith("\n") && !out.endsWith("\n\n"), "entry ends with one newline");
   assert.ok(!out.includes("\r"), "no CR bytes");
-  const properties = new Set([
-    "HASH",
-    "PLAUD-ID",
-    "CREATED",
-    "DURATION",
-    "BITRATE",
-    "FILESIZE",
-    "SOURCE",
-    "SYNOPSIS",
-    "CLEANUP",
-    "KIND",
-  ]);
   for (const line of out.split("\n")) {
     const m = line.match(/^  :([A-Z-]+):(.*)$/);
     if (!m || !properties.has(m[1])) continue;
@@ -127,5 +134,167 @@ test("pinned layout: value field starts at 1-based column 16 on every padded pro
         `value of :${tag}: starts at 0-based index 15 = 1-based column 16`,
       );
     }
+  }
+});
+
+const headerLine = CANONICAL_HEADER;
+
+test("append to a missing ledger writes the canonical header verbatim, one blank line, then entries", async () => {
+  const dir = join(tmpdir(), `c2-contract-${Date.now()}-${process.pid}`);
+  mkdirSync(dir, { recursive: true });
+  try {
+    const ledger = join(dir, "ledger.org");
+    await appendLedger(ledger, [serializeEntry(sampleEntry)]);
+    const text = readFileSync(ledger, "utf8");
+    assert.ok(text.startsWith(headerLine + "\n\n"), "canonical header + blank line");
+    assert.equal(text, headerLine + "\n\n" + serializeEntry(sampleEntry) + "\n");
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("append to an empty ledger behaves like a missing ledger", async () => {
+  const dir = join(tmpdir(), `c2-contract-${Date.now()}-${process.pid}`);
+  mkdirSync(dir, { recursive: true });
+  try {
+    const ledger = join(dir, "ledger.org");
+    writeFileSync(ledger, "", "utf8");
+    await appendLedger(ledger, [serializeEntry(sampleEntry)]);
+    const text = readFileSync(ledger, "utf8");
+    assert.equal(text, headerLine + "\n\n" + serializeEntry(sampleEntry) + "\n");
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("append preserves existing bytes as an exact prefix and separates with one blank line", async () => {
+  const dir = join(tmpdir(), `c2-contract-${Date.now()}-${process.pid}`);
+  mkdirSync(dir, { recursive: true });
+  try {
+    const ledger = join(dir, "ledger.org");
+    const old = headerLine + "\n\nold content line\n";
+    writeFileSync(ledger, old, "utf8");
+    await appendLedger(ledger, [serializeEntry(sampleEntry)]);
+    const text = readFileSync(ledger, "utf8");
+    assert.ok(text.startsWith(old), "existing bytes are an exact prefix");
+    assert.equal(
+      text,
+      old + "\n" + serializeEntry(sampleEntry) + "\n",
+      "one blank line between existing content and the new entry",
+    );
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("append to a ledger not ending in a newline terminates it with one blank line", async () => {
+  const dir = join(tmpdir(), `c2-contract-${Date.now()}-${process.pid}`);
+  mkdirSync(dir, { recursive: true });
+  try {
+    const ledger = join(dir, "ledger.org");
+    const old = headerLine + "\n\nunterminated tail";
+    writeFileSync(ledger, old, "utf8");
+    await appendLedger(ledger, [serializeEntry(sampleEntry)]);
+    const text = readFileSync(ledger, "utf8");
+    assert.equal(text, old + "\n\n" + serializeEntry(sampleEntry) + "\n");
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("two appended entries are separated by exactly one blank line", async () => {
+  const dir = join(tmpdir(), `c2-contract-${Date.now()}-${process.pid}`);
+  mkdirSync(dir, { recursive: true });
+  try {
+    const ledger = join(dir, "ledger.org");
+    const second = { ...sampleEntry, basename: "second.mp3" };
+    await appendLedger(ledger, [serializeEntry(sampleEntry), serializeEntry(second)]);
+    const text = readFileSync(ledger, "utf8");
+    assert.equal(
+      text,
+      headerLine +
+        "\n\n" +
+        serializeEntry(sampleEntry) +
+        "\n\n" +
+        serializeEntry(second) +
+        "\n",
+    );
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("lock file lives outside the tracked tree, named by a sha256 path digest", () => {
+  const p = lockPathFor("/home/jstavel/org/ingest-ledger.org");
+  const runtimeDir = process.env.XDG_RUNTIME_DIR || tmpdir();
+  assert.ok(p.startsWith(runtimeDir + "/"), "lock is under the runtime dir");
+  assert.ok(
+    /^plaud-pipeline-[0-9a-f]{16}\.lock$/.test(p.split("/").pop()),
+    "lock name embeds the 16-char digest",
+  );
+  assert.ok(!p.includes("/org/"), "lock is outside the tracked ~/org tree");
+});
+
+test("a stale lock (dead pid) is removed once and the append proceeds", async () => {
+  const dir = join(tmpdir(), `c2-contract-${Date.now()}-${process.pid}`);
+  mkdirSync(dir, { recursive: true });
+  try {
+    const ledger = join(dir, "ledger.org");
+    const lock = lockPathFor(ledger);
+    writeFileSync(lock, JSON.stringify({ pid: 2_147_400_000, startedAt: new Date().toISOString() }), "utf8");
+    await appendLedger(ledger, [serializeEntry(sampleEntry)]);
+    const text = readFileSync(ledger, "utf8");
+    assert.ok(text.startsWith(headerLine));
+    assert.ok(!existsSync(lock), "lock removed after the run");
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("a stale lock (old startedAt) is removed once and the append proceeds", async () => {
+  const dir = join(tmpdir(), `c2-contract-${Date.now()}-${process.pid}`);
+  mkdirSync(dir, { recursive: true });
+  try {
+    const ledger = join(dir, "ledger.org");
+    const lock = lockPathFor(ledger);
+    const old = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+    writeFileSync(lock, JSON.stringify({ pid: process.pid, startedAt: old }), "utf8");
+    await appendLedger(ledger, [serializeEntry(sampleEntry)]);
+    assert.ok(readFileSync(ledger, "utf8").startsWith(headerLine));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("append refuses a non-TODO entry at the write boundary (FR-004)", async () => {
+  const dir = join(tmpdir(), `c2-contract-${Date.now()}-${process.pid}`);
+  mkdirSync(dir, { recursive: true });
+  try {
+    const ledger = join(dir, "ledger.org");
+    const notTodo = sample.replace("* TODO ", "* WAIVED ");
+    await assert.rejects(
+      () => appendLedger(ledger, [notTodo]),
+      /non-TODO/,
+    );
+    assert.ok(!existsSync(ledger));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+test("a live lock fails the run (exit-2 semantics)", async () => {
+  const dir = join(tmpdir(), `c2-contract-${Date.now()}-${process.pid}`);
+  mkdirSync(dir, { recursive: true });
+  try {
+    const ledger = join(dir, "ledger.org");
+    const lock = lockPathFor(ledger);
+    writeFileSync(lock, JSON.stringify({ pid: process.pid, startedAt: new Date().toISOString() }), "utf8");
+    await assert.rejects(
+      () => appendLedger(ledger, [serializeEntry(sampleEntry)]),
+      /lock/,
+    );
+    assert.ok(!existsSync(ledger), "ledger untouched");
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
   }
 });

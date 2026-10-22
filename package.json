@@ -1,0 +1,28 @@
+{
+  "name": "plaud-pipeline",
+  "version": "0.1.0",
+  "private": true,
+  "description": "C2 — Register in Ledger: register ~/Downloads top-level files into ingest-ledger.org",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "bin": {
+    "plaud-pipeline": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:emacs": "emacs --batch -Q -l tests/emacs/check-ledger.el -- tests/fixtures/ledger/existing.org"
+  },
+  "dependencies": {
+    "luxon": "^3.7.1",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/luxon": "^3.6.5",
+    "@types/node": "^24.3.0",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

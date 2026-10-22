@@ -27,10 +27,10 @@ Single project at repository root: `src/`, `tests/`, `specs/c2-register-in-ledge
 
 **Purpose**: Initialize the TypeScript CLI project and test runner.
 
-- [ ] T001 Create `package.json` with Node 24 engines, ESM, `zod`/`luxon` runtime dependencies, `typescript`/`vitest`/`@types/*` dev dependencies, and scripts `build`, `test`, `test:emacs` in `package.json`
-- [ ] T002 [P] Create strict ESM TypeScript configuration in `tsconfig.json`
-- [ ] T003 [P] Configure Vitest for unit, contract and integration suites in `vitest.config.ts`
-- [ ] T004 [P] Add `coverage/` and fixture temp output to `.gitignore`
+- [X] T001 Create `package.json` with Node 24 engines, ESM, `zod`/`luxon` runtime dependencies, `typescript`/`vitest`/`@types/*` dev dependencies, and scripts `build`, `test`, `test:emacs` in `package.json`
+- [X] T002 [P] Create strict ESM TypeScript configuration in `tsconfig.json`
+- [X] T003 [P] Configure Vitest for unit, contract and integration suites in `vitest.config.ts`
+- [X] T004 [P] Add `coverage/` and fixture temp output to `.gitignore`
 
 ---
 
@@ -41,17 +41,17 @@ that every user story depends on.
 
 **⚠️ CRITICAL**: No user story implementation starts until this phase is complete.
 
-- [ ] T005 [P] Define `SourceItem`, `FileMetadata`, `PlaudRecording`, `LedgerEntry`, `OutOfScopeItem`, `RunReport` and `RunError` types in `src/domain/types.ts`
-- [ ] T006 Define Zod schemas and inferred validators for CLI input, Plaud responses and report output in `src/domain/schemas.ts`
-- [ ] T007 [P] Create deterministic fixture builder for basic/duplicate/nested/non-regular/hundred-file trees and tiny audio files in `tests/fixtures/build-fixtures.ts`
-- [ ] T008 [P] Create the canonical pre-seeded ledger fixture with `#+TODO:`, a `TODO`, a `WAIVED` and a legacy `:DECISION:` entry in `tests/fixtures/ledger/existing.org`
-- [ ] T009 Write failing contract tests for the entry template, empty-value whitespace, header creation, byte-prefix append and lock location in `tests/contract/ledger-entry.test.ts`
-- [ ] T010 [P] Implement heading/property/`LOGBOOK` parsing in `src/ledger/parse.ts`
-- [ ] T011 [P] Implement the exact v2-plus-Q1 entry serializer in `src/ledger/serialize.ts`
-- [ ] T012 Implement byte-preserving append, fresh-ledger header creation and runtime-dir locking in `src/ledger/append.ts`
-- [ ] T013 Implement the single public ledger boundary (`read`, `parse`, `append`) in `src/ledger/index.ts`
-- [ ] T014 [P] Add shared CLI test helper for temp ledger paths and fixture invocation in `tests/helpers/run-cli.ts`
-- [ ] T015 [P] Add shared temp-directory/ledger lifecycle helper in `tests/helpers/temp-ledger.ts`
+- [X] T005 [P] Define `SourceItem`, `FileMetadata`, `PlaudRecording`, `LedgerEntry`, `OutOfScopeItem`, `RunReport` and `RunError` types in `src/domain/types.ts`
+- [X] T006 Define Zod schemas and inferred validators for CLI input, Plaud responses and report output in `src/domain/schemas.ts`
+- [X] T007 [P] Create deterministic fixture builder for basic/duplicate/nested/non-regular/hundred-file trees and tiny audio files in `tests/fixtures/build-fixtures.ts`
+- [X] T008 [P] Create the canonical pre-seeded ledger fixture with `#+TODO:`, a `TODO`, a `WAIVED` and a legacy `:DECISION:` entry in `tests/fixtures/ledger/existing.org`
+- [X] T009 Write failing contract tests for the entry template, empty-value whitespace, header creation, byte-prefix append and lock location in `tests/contract/ledger-entry.test.ts`
+- [X] T010 [P] Implement heading/property/`LOGBOOK` parsing in `src/ledger/parse.ts`
+- [X] T011 [P] Implement the exact v2-plus-Q1 entry serializer in `src/ledger/serialize.ts`
+- [X] T012 Implement byte-preserving append, fresh-ledger header creation and runtime-dir locking in `src/ledger/append.ts`
+- [X] T013 Implement the single public ledger boundary (`read`, `parse`, `append`) in `src/ledger/index.ts`
+- [X] T014 [P] Add shared CLI test helper for temp ledger paths and fixture invocation in `tests/helpers/run-cli.ts`
+- [X] T015 [P] Add shared temp-directory/ledger lifecycle helper in `tests/helpers/temp-ledger.ts`
 
 **Checkpoint**: Types, fixtures and the ledger boundary are ready; user stories can start.
 
@@ -69,28 +69,28 @@ source `mtime` unchanged; fresh ledger passes the Emacs check.
 
 ### Tests for User Story 1 (mandatory, write first) ⚠️
 
-- [ ] T016 [P] [US1] Write failing unit tests for flat scan, non-regular classification, sorting and tie-break in `tests/unit/scan.test.ts`
-- [ ] T017 [P] [US1] Write failing unit tests for duration/bitrate/filesize/created formats in `tests/unit/metadata.test.ts`
-- [ ] T018 [P] [US1] Write failing integration test for 3 new files in `tests/integration/register-new.test.ts`
-- [ ] T019 [P] [US1] Write failing integration test for 100 distinct files in `tests/integration/register-100.test.ts`
-- [ ] T020 [P] [US1] Write failing integration test for nested directories and symlink/fifo handling in `tests/integration/register-scope.test.ts`
-- [ ] T021 [P] [US1] Write failing integration test for a missing/empty ledger, canonical header and Emacs pass in `tests/integration/fresh-ledger.test.ts`
-- [ ] T022 [P] [US1] Commit the Emacs batch harness that reads `#+TODO:` and asserts five keywords in `tests/emacs/check-ledger.el`
-- [ ] T023 [P] [US1] Write failing contract tests for the Plaud inventory adapter and `start_at` join using a fake MCP server in `tests/contract/plaud-inventory.test.ts`
-- [ ] T024 [P] [US1] Write failing integration test for API unavailability leaving `:PLAUD-ID:` empty and exit 0 in `tests/integration/plaud-failure.test.ts`
+- [X] T016 [P] [US1] Write failing unit tests for flat scan, non-regular classification, sorting and tie-break in `tests/unit/scan.test.ts`
+- [X] T017 [P] [US1] Write failing unit tests for duration/bitrate/filesize/created formats in `tests/unit/metadata.test.ts`
+- [X] T018 [P] [US1] Write failing integration test for 3 new files in `tests/integration/register-new.test.ts`
+- [X] T019 [P] [US1] Write failing integration test for 100 distinct files in `tests/integration/register-100.test.ts`
+- [X] T020 [P] [US1] Write failing integration test for nested directories and symlink/fifo handling in `tests/integration/register-scope.test.ts`
+- [X] T021 [P] [US1] Write failing integration test for a missing/empty ledger, canonical header and Emacs pass in `tests/integration/fresh-ledger.test.ts`
+- [X] T022 [P] [US1] Commit the Emacs batch harness that reads `#+TODO:` and asserts five keywords in `tests/emacs/check-ledger.el`
+- [X] T023 [P] [US1] Write failing contract tests for the Plaud inventory adapter and `start_at` join using a fake MCP server in `tests/contract/plaud-inventory.test.ts`
+- [X] T024 [P] [US1] Write failing integration test for API unavailability leaving `:PLAUD-ID:` empty and exit 0 in `tests/integration/plaud-failure.test.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T025 [P] [US1] Implement flat `readdir` enumeration and `OutOfScopeItem` reasons in `src/register/scan.ts`
-- [ ] T026 [P] [US1] Implement streamed sha256 and size capture in `src/register/fingerprint.ts`
-- [ ] T027 [P] [US1] Implement `KIND` classification and filename-date extraction rules in `src/register/classify.ts`
-- [ ] T028 [P] [US1] Implement `ffprobe` duration/bitrate extraction and non-audio handling in `src/metadata/ffprobe.ts`
-- [ ] T029 [P] [US1] Implement filename-date and `mtime`-fallback creation date in `src/metadata/created.ts`
-- [ ] T030 [P] [US1] Implement CLI option/path resolution and defaults in `src/config.ts`
-- [ ] T031 [P] [US1] Implement the MCP stdio JSON-RPC client and `--no-plaud` bypass in `src/plaud/client.ts`
-- [ ] T032 [US1] Implement paged `list_files` retrieval, throttling/backoff and `start_at` join in `src/plaud/inventory.ts`
-- [ ] T033 [US1] Implement the registration use case: scan → dedupe → enrich → append → result in `src/register/run.ts`
-- [ ] T034 [US1] Wire the `register` command, defaults and `--no-plaud` in `src/cli.ts`
+- [X] T025 [P] [US1] Implement flat `readdir` enumeration and `OutOfScopeItem` reasons in `src/register/scan.ts`
+- [X] T026 [P] [US1] Implement streamed sha256 and size capture in `src/register/fingerprint.ts`
+- [X] T027 [P] [US1] Implement `KIND` classification and filename-date extraction rules in `src/register/classify.ts`
+- [X] T028 [P] [US1] Implement `ffprobe` duration/bitrate extraction and non-audio handling in `src/metadata/ffprobe.ts`
+- [X] T029 [P] [US1] Implement filename-date and `mtime`-fallback creation date in `src/metadata/created.ts`
+- [X] T030 [P] [US1] Implement CLI option/path resolution and defaults in `src/config.ts`
+- [X] T031 [P] [US1] Implement the MCP stdio JSON-RPC client and `--no-plaud` bypass in `src/plaud/client.ts`
+- [X] T032 [US1] Implement paged `list_files` retrieval, throttling/backoff and `start_at` join in `src/plaud/inventory.ts`
+- [X] T033 [US1] Implement the registration use case: scan → dedupe → enrich → append → result in `src/register/run.ts`
+- [X] T034 [US1] Wire the `register` command, defaults and `--no-plaud` in `src/cli.ts`
 
 **Checkpoint**: US1 is independently functional and testable; fresh and existing ledgers work.
 
@@ -107,18 +107,18 @@ report contract.
 
 ### Tests for User Story 2 (mandatory, write first) ⚠️
 
-- [ ] T035 [P] [US2] Write failing contract tests for exact human labels and path sections in `tests/contract/report-human.test.ts`
-- [ ] T036 [P] [US2] Write failing contract tests for JSON report shape, counts equality and reasons in `tests/contract/report-json.test.ts`
-- [ ] T037 [P] [US2] Write failing integration test for mixed new/duplicate/out-of-scope counts in `tests/integration/report-counts.test.ts`
-- [ ] T038 [P] [US2] Write failing integration test for per-file errors and exit 0 in `tests/integration/report-errors.test.ts`
+- [X] T035 [P] [US2] Write failing contract tests for exact human labels and path sections in `tests/contract/report-human.test.ts`
+- [X] T036 [P] [US2] Write failing contract tests for JSON report shape, counts equality and reasons in `tests/contract/report-json.test.ts`
+- [X] T037 [P] [US2] Write failing integration test for mixed new/duplicate/out-of-scope counts in `tests/integration/report-counts.test.ts`
+- [X] T038 [P] [US2] Write failing integration test for per-file errors and exit 0 in `tests/integration/report-errors.test.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T039 [P] [US2] Implement exact human report rendering in `src/report/human.ts`
-- [ ] T040 [P] [US2] Implement the JSON report object and schema validation in `src/report/json.ts`
-- [ ] T041 [US2] Implement report assembly from the run result in `src/report/build.ts`
-- [ ] T042 [US2] Wire `--json`, stdout/stderr channels and exit codes in `src/cli.ts`
-- [ ] T043 [US2] Add per-file error capture and stable reason text in `src/register/run.ts`
+- [X] T039 [P] [US2] Implement exact human report rendering in `src/report/human.ts`
+- [X] T040 [P] [US2] Implement the JSON report object and schema validation in `src/report/json.ts`
+- [X] T041 [US2] Implement report assembly from the run result in `src/report/build.ts`
+- [X] T042 [US2] Wire `--json`, stdout/stderr channels and exit codes in `src/cli.ts`
+- [X] T043 [US2] Add per-file error capture and stable reason text in `src/register/run.ts`
 
 **Checkpoint**: US1 and US2 both work; a human and a machine can read the same run.
 
@@ -135,15 +135,15 @@ file matching the `WAIVED` hash adds zero records.
 
 ### Tests for User Story 3 (mandatory, write first) ⚠️
 
-- [ ] T044 [P] [US3] Write failing integration test for byte-identical existing records, including `WAIVED`, in `tests/integration/no-rewrite.test.ts`
-- [ ] T045 [P] [US3] Write failing integration test asserting all new headings are `TODO` and no `:DECISION:` drawer is written in `tests/integration/state-guard.test.ts`
-- [ ] T046 [P] [US3] Write failing integration test for duplicate suppression against a `WAIVED` hash in `tests/integration/dedupe-any-state.test.ts`
+- [X] T044 [P] [US3] Write failing integration test for byte-identical existing records, including `WAIVED`, in `tests/integration/no-rewrite.test.ts`
+- [X] T045 [P] [US3] Write failing integration test asserting all new headings are `TODO` and no `:DECISION:` drawer is written in `tests/integration/state-guard.test.ts`
+- [X] T046 [P] [US3] Write failing integration test for duplicate suppression against a `WAIVED` hash in `tests/integration/dedupe-any-state.test.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T047 [P] [US3] Add the `TODO`-only guard and byte-prefix assertion to `src/ledger/append.ts`
-- [ ] T048 [P] [US3] Add all-state hash extraction to the duplicate set in `src/ledger/parse.ts`
-- [ ] T049 [US3] Add no-transition and no-rewrite guards to the registration path in `src/register/run.ts`
+- [X] T047 [P] [US3] Add the `TODO`-only guard and byte-prefix assertion to `src/ledger/append.ts`
+- [X] T048 [P] [US3] Add all-state hash extraction to the duplicate set in `src/ledger/parse.ts`
+- [X] T049 [US3] Add no-transition and no-rewrite guards to the registration path in `src/register/run.ts`
 
 **Checkpoint**: All three stories are independently functional; the ledger is append-only.
 
@@ -153,11 +153,11 @@ file matching the `WAIVED` hash adds zero records.
 
 **Purpose**: Contract closure, documentation and end-to-end validation.
 
-- [ ] T050 [P] Update `~/org/projects/ingest-spec.org` v2 template with `:BITRATE:`, `:FILESIZE:`, `:CLEANUP:` and the `archive`/`other-file` KIND values (R15 owned task)
-- [ ] T051 [P] Add the ADR 0012 tool declaration and capability block in `README.md`
-- [ ] T052 [P] Add a 1,163-file performance smoke test with streamed hashing and bounded memory in `tests/integration/perf-1163.test.ts`
-- [ ] T053 Execute the `quickstart.md` scenarios end to end and correct any command or expectation drift in `quickstart.md`
-- [ ] T054 Run `npm test` and `npm run test:emacs`; fix any remaining contract/integration failures and record the final result in `quickstart.md`
+- [X] T050 [P] Update `~/org/projects/ingest-spec.org` v2 template with `:BITRATE:`, `:FILESIZE:`, `:CLEANUP:` and the `archive`/`other-file` KIND values (R15 owned task)
+- [X] T051 [P] Add the ADR 0012 tool declaration and capability block in `README.md`
+- [X] T052 [P] Add a 1,163-file performance smoke test with streamed hashing and bounded memory in `tests/integration/perf-1163.test.ts`
+- [X] T053 Execute the `quickstart.md` scenarios end to end and correct any command or expectation drift in `quickstart.md`
+- [X] T054 Run `npm test` and `npm run test:emacs`; fix any remaining contract/integration failures and record the final result in `quickstart.md`
 
 ---
 
@@ -254,17 +254,16 @@ Task: "Write failing all-state dedupe test in tests/integration/dedupe-any-state
 ## Known Deliberate Gaps (review 2026-10-22)
 
 Recorded so they survive rehydration (constitution: review findings never live only
-in conversation). Each belongs to the task that touches it — do not resolve it
-elsewhere or preempt the implementer.
+in conversation). Status after implementation (2026-10-22):
 
-- Legacy `:CREATED: N/A` — the real ledger contains it, the contract allows only
-  `YYYY-MM-DD`; the parser must decide deliberately whether legacy values are
-  tolerated or fatal → T010, T048.
-- `tests/contract/ledger-entry.test.ts` runs under `node --test` today; keep it
-  green-equivalent under Vitest → T001–T003.
-- `serializeEntry` input shape is provisional; the oracle is fixed (byte-exact
-  against `tests/fixtures/ledger/verbatim-entry.org`, values-only normalization) →
-  T011.
-- The verbatim fixture is derived (legacy `:DECISION:` drawer removed from the
-  first real `TODO` record; no v2-shaped record exists in the real ledger yet);
-  replace it when a genuine one appears → T008/T009.
+- RESOLVED (T010/T048): legacy `:CREATED: N/A` — the ledger parser tolerates
+  legacy values by capturing them verbatim; only a malformed property drawer
+  STRUCTURE is fatal. Strict `YYYY-MM-DD` applies to C2-written entries.
+- RESOLVED (T001–T003): the byte-exact contract test runs under Vitest (the
+  file was converted from the temporary `node --test` harness).
+- RESOLVED (T011): `serializeEntry` input shape settled as implemented and
+  pinned by the oracle (byte-exact against the verbatim sample, values-only
+  normalization).
+- STILL OPEN: the verbatim fixture is derived (legacy `:DECISION:` drawer
+  removed from the first real `TODO` record; no v2-shaped record exists in the
+  real ledger yet); replace it when a genuine one appears.
