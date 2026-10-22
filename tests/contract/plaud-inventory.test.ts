@@ -140,3 +140,19 @@ test("a recording with an unparseable start_at is skipped, not fatal", async () 
     expect(result.recordings.map((r) => r.id)).toEqual(["of_aaa1"]);
   }
 });
+
+// contracts/plaud-inventory.md: the envelope may put the recording array in
+// `files`, `items`, `data`, or be a bare array.
+test.each(["envelope-items", "envelope-data", "envelope-bare"])(
+  "envelope shape %s is accepted",
+  async (scenario) => {
+    root = await mkdtemp(join(tmpdir(), "c2-plaud-"));
+    log = join(root, "log");
+    const inv = new McpPlaudInventory(envFor(scenario));
+    const result = await inv.fetchAll();
+    expect(result.available).toBe(true);
+    if (result.available) {
+      expect(result.recordings.map((r) => r.id)).toEqual(["of_aaa1", "of_aaa2"]);
+    }
+  },
+);

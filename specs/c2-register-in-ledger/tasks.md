@@ -282,3 +282,16 @@ traces to its source. Constitution principles I–III verified — no remediatio
 - [X] T057 Add a test for `--help`: prints usage, exits 0, performs no filesystem writes per `contracts/cli.md` (partial)
 - [X] T058 Add a test for a basename containing a control character: one `chyby` entry with phase `scan`, no record per `data-model.md` SourceItem rule (partial)
 - [X] T059 Remove the unused `entryKindSchema` export from `src/domain/schemas.ts` (or justify it at a boundary) — code not called for by spec/plan/tasks (unrequested)
+
+---
+
+## Phase 8: Convergence
+
+**Purpose**: Gaps found by the second `/speckit.converge` on 2026-10-22 (after
+Phase 7): contract sub-clauses implemented but not yet verified. FR/SC/AC set,
+plan decisions and constitution are clean. Ordered by severity.
+
+- [X] T060 Add an integration test for the append-failure path: a ledger that cannot be opened for append (e.g. read-only parent directory) must exit 2, leave the original bytes untouched, and remove the lock per `ledger-entry.md` append protocol (partial)
+- [X] T061 Add tests for the remaining inventory envelope shapes (`items`, `data`, bare array) accepted by `src/plaud/inventory.ts` per `contracts/plaud-inventory.md` (partial)
+- [X] T062 Add a test for a missing server command (`PLAUD_MCP_CMD` pointing at a nonexistent executable): inventory degrades to `available: false`, run exits 0, `:PLAUD-ID:` stays empty per `contracts/plaud-inventory.md` (partial)
+- [X] T063 Add a scan test for a unix socket entry in the scan root: one `mimo scope` item with reason `socket`, never read per FR-001 and `data-model.md` (partial)

@@ -51,3 +51,21 @@ test("non-regular entries are reported with explicit reasons", async () => {
   expect(reasons.get(join(root, "pipe.fifo"))).toBe("fifo");
   expect(result.candidates.map((c) => c.basename)).toEqual(["target.txt"]);
 });
+
+test("a unix socket in the scan root is one out-of-scope item with reason socket, never read", async () => {
+  const root = await temp();
+  const net = await import("node:net");
+  const socketPath = join(root, "daemon.sock");
+  const server = net.createServer();
+  await new Promise<void>((resolve) => {
+    server.listen(socketPath, () => resolve());
+  });
+  try {
+    const result = await scanDownloads(root);
+    const reasons = new Map(result.outOfScope.map((o) => [o.path, o.reason]));
+    expect(reasons.get(socketPath)).toBe("socket");
+    expect(result.candidates).toHaveLength(0);
+  } finally {
+    await new Promise<void>((resolve) => server.close(() => resolve()));
+  }
+});

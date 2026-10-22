@@ -114,6 +114,23 @@ async function handleMessage(line) {
       });
       return;
     }
+    if (scenario === "envelope-items" || scenario === "envelope-data" || scenario === "envelope-bare") {
+      const records = page(pageIndex);
+      const payload =
+        scenario === "envelope-items"
+          ? { items: records }
+          : scenario === "envelope-data"
+            ? { data: records }
+            : records;
+      send({
+        jsonrpc: "2.0",
+        id: msg.id,
+        result: {
+          content: [{ type: "text", text: JSON.stringify(payload) }],
+        },
+      });
+      return;
+    }
     send({
       jsonrpc: "2.0",
       id: msg.id,

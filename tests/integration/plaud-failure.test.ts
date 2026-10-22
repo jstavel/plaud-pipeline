@@ -84,3 +84,28 @@ test("a successful join fills :PLAUD-ID: from start_at, never from the name", as
   const unjoined = entries.find((e) => e.headline.endsWith("voice-memo.mp3"));
   expect(unjoined?.plaudId).toBe("");
 });
+
+// contracts/plaud-inventory.md: "A missing server command ... is not fatal."
+test("a missing server command degrades immediately: plaud error entry, exit 0, empty :PLAUD-ID:", async () => {
+  const result = await runCli(
+    ["register", "--downloads", downloads, "--ledger", ledger],
+    { PLAUD_MCP_CMD: "/nonexistent/plaud-server-cmd" },
+  );
+  expect(result.code).toBe(0);
+  const entries = parseLedger(await readFile(ledger, "utf8"));
+  expect(entries).toHaveLength(3);
+  expect(entries.every((e) => e.plaudId === "")).toBe(true);
+  const report = JSON.parse(
+    (
+      await runCli(
+        ["register", "--downloads", downloads, "--ledger", ledger, "--json"],
+        { PLAUD_MCP_CMD: "/nonexistent/plaud-server-cmd" },
+      )
+    ).stdout,
+  );
+  expect(report.errors).toContainEqual({
+    path: "plaud-inventory",
+    phase: "plaud",
+    reason: expect.stringMatching(/server command failed/i),
+  });
+});

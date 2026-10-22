@@ -73,6 +73,27 @@ export async function withMcpSession<T>(
     }
   });
 
+  // A missing server command or a server that exits before answering is a
+  // config/process failure, not one of the retryable conditions (429, 5xx,
+  // timeout, DNS); reject pending requests immediately instead of waiting for
+  // the per-request timeout.
+  const failPending = (message: string) => {
+    for (const [id, p] of pending) {
+      pending.delete(id);
+      clearTimeout(p.timer);
+      p.reject(new RpcError(message, undefined));
+    }
+  };
+  // When the server dies before reading, the next write raises EPIPE on the
+  // pipe; swallow it here — failPending already rejects the waiters.
+  child.stdin?.on("error", () => {});
+  child.on("error", (error) => {
+    failPending(`server command failed: ${error.message}`);
+  });
+  child.on("close", (code) => {
+    failPending(`server command failed: exited with code ${code ?? "unknown"}`);
+  });
+
   const call: RpcCall = async (method, params) => {
     const gap = lastSend + THROTTLE_MS - Date.now();
     if (gap > 0) {
