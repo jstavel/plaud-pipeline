@@ -39,8 +39,16 @@
 - No `:DECISION:` drawer is written.
 - All ten properties are always present in the order shown. Every property line
   except `:CLEANUP:` is padded so the value—or, for an empty value, the end of
-  line—begins at column 16. `:CLEANUP:` has no trailing whitespace. The template
-  above is the single source of truth for this spelling.
+  line—begins at column 16, counted 1-based on the full line including the
+  two-space drawer indent (0-based byte index 15). Equivalently: the prefix
+  before the value is exactly 15 characters and an empty-value line is exactly 15
+  characters long; counting without the drawer indent reads column 14 — the same
+  measured layout under a different numbering. Measured against the real ledger
+  `~/org/ingest-ledger.org` (2026-10-22: 171 records, all ten properties, one
+  layout). `:CLEANUP:` has no trailing whitespace (exactly 11 characters). The
+  template above is the single source of truth for this spelling, pinned
+  byte-exactly by `tests/contract/ledger-entry.test.ts` against a verbatim ledger
+  sample (`tests/fixtures/ledger/verbatim-entry.org`).
 
 ## Append protocol
 

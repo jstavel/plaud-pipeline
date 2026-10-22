@@ -5,7 +5,8 @@
 **Created**: 2026-10-21
 
 **Status**: Clarified 2026-10-21 (round 1; Q1–Q5 accepted, remaining findings
-deferred with intended readings)
+deferred with intended readings); review 2026-10-22 — čtení OPEN-03/12/16/18
+zakotvena v normativním textu, OPEN-17 doplněno do Clarifications
 
 **Input**: Capability C2 z `~/org/projects/plaud-pipeline.org`: „položka → záznam
 v `ingest-ledger.org`". Uzavírá capability gap pojmenovanou v ADR 0012 (nic dnes
@@ -68,12 +69,17 @@ technickými metadaty a stavem `TODO`.
 ### Session 2026-10-21 — deferred (intended readings)
 
 Tyto položky nejsou v tomto kole rozhodnuté; jejich zamýšlené čtení je níže, aby se
-neztratily.
+neztratily. Určení čtení **OPEN-03/12/16/18** byla ownerem přijata jako závazná a
+jsou od 2026-10-22 zakotvena v normativním textu (FR-002, FR-009, US2 AC1, US3 AC2);
+záznamy níže zůstávají pro dokumentaci historie.
 
 - **OPEN-03** — každý hash už přítomný v ledgeru vyhrává; nový záznam se nezakládá.
   Ověřit fixture testem.
 - **OPEN-16** — „žádný jiný stav“ = žádný jiný stav mezi záznamy vytvořenými tímto
   během.
+- **OPEN-17** — „0 duplicit“ v SC-001 znamená obojí: (a) nula duplicitních hashů
+  mezi výslednými 100 záznamy a (b) nula souborů ohlášených jako duplicity během
+  běhu. (Přijato ownerem 2026-10-22; v předchozím zápisu chybělo.)
 - **OPEN-12** — US2 už fixuje labely; kanál, schema a exit-code policy patří do planu.
 - **OPEN-13** — pokračovat po souborech, zapsat chybu, nezakládat částečný záznam,
   exit 0 pokud běh dokončil.
@@ -130,7 +136,8 @@ jednoho mimo-scope adresáře → výstup obsahuje tři kategorie s počty a sez
 
 1. **Given** 2 nové soubory, 1 duplicitní soubor a 1 podadresář, **When** se pipeline
    spustí, **Then** výstup uvádí `nové: 2`, `duplicity: 1`, `mimo scope: 1`
-   a běh skončí s kódem 0.
+   a běh skončí s kódem 0. Kanál, schéma výstupu a exit kódy definuje
+   `contracts/run-report.md` (OPEN-12).
 
 ### User Story 3 — Stroj nerozhoduje (Priority: P3)
 
@@ -147,7 +154,9 @@ registraci → záznam je po běhu bajtově identický.
 1. **Given** existující záznam ve stavu `WAIVED`, **When** registrace proběhne,
    **Then** se jeho obsah nezmění a stav zůstane `WAIVED`.
 2. **Given** nový soubor, **When** registrace proběhne, **Then** vzniklý záznam má
-   stav `TODO` a žádný jiný stav se v ledgeru neobjeví.
+   stav `TODO` a žádný jiný stav se neobjeví mezi záznamy vytvořenými tímto během
+   (OPEN-16); a žádný již existující záznam nezmění svůj obsah ani stav
+   (viz FR-005).
 
 ## Requirements
 
@@ -155,7 +164,8 @@ registraci → záznam je po běhu bajtově identický.
   Top-level adresář nebo jiný non-regular entry (symlink, fifo, socket) je jedna
   `mimo scope` položka s důvodem; jeho obsah ani cíl se nečte.
 - **FR-002 Identita**: `:HASH:` = sha256 obsahu souboru; duplicita se rozhoduje
-  výhradně podle hashe.
+  výhradně podle hashe. Jakýkoli hash už přítomný kdekoli v ledgeru — v jakémkoli
+  stavu záznamu — potlačí nový záznam (OPEN-03).
 - **FR-003 Metadata**: `:SOURCE:` absolutní cesta, `:DURATION:` z `ffprobe`
   (u souboru bez audio streamu prázdná), `:BITRATE:`, `:FILESIZE:`, `:KIND:`.
   `:CREATED:` z data v názvu souboru, jinak z `mtime`; použitý zdroj se zapíše
@@ -168,7 +178,8 @@ registraci → záznam je po běhu bajtově identický.
 - **FR-008 Opakovatelnost**: druhý běh nad stejným stavem = 0 nových záznamů.
 - **FR-009 Síť**: `:PLAUD-ID:` se doplňuje přes API (join přes `start_at`, nikdy
   z názvu) s throttle + backoff; při nedostupnosti API se záznam založí bez
-  `:PLAUD-ID:` a běh neselže.
+  `:PLAUD-ID:` a běh neselže. Prázdné `:PLAUD-ID:` C2 nikdy zpětně nedoplňuje;
+  obohacení je samostatná stage (OPEN-18).
 - **FR-010 Synopse**: registrace **neplní ani nemodifikuje hodnotu `:SYNOPSIS:`**;
   property zůstává prázdná, což je platný stav (plní ji C4).
 
